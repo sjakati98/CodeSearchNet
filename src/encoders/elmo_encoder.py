@@ -60,7 +60,7 @@ class ElmoEncoder(SeqEncoder):
                 {
                     "tokens": seq_tokens,
                     "squence_len": seq_tokens_lengths
-                }
+                },
                 signature='tokens',
                 as_dict=True
             )[self.get_hyper('embedding_type')] ## [batch_size, max_length, 1024 or 512]
