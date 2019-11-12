@@ -19,7 +19,7 @@ def get_model_class_from_name(model_name: str) -> Type[Model]:
     elif model_name in {'convselfatt', 'convselfattentionmodel'}:
         return ConvSelfAttentionModel
     elif model_name in {'elmornn', 'elmo', 'elmornnmodel'}:
-        return ElmoRNNModel
+        return ElmoModel
     else:
         raise Exception("Unknown model '%s'!" % model_name)
 
