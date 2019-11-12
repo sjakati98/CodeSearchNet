@@ -59,7 +59,7 @@ class ElmoEncoder(SeqEncoder):
             token_embeddings = elmo(
                 {
                     "tokens": seq_tokens,
-                    "squence_len": seq_tokens_lengths
+                    "sequence_len": seq_tokens_lengths
                 },
                 signature='tokens',
                 as_dict=True
