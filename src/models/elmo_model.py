@@ -9,7 +9,7 @@ class ElmoModel(Model):
         hypers = {}
         for label in ["code", "query"]:
             hypers.update({f'{label}_{key}': value
-                           for key, value in RNNEncoder.get_default_hyperparameters().items()})
+                           for key, value in ElmoModel.get_default_hyperparameters().items()})
         model_hypers = {
             'code_use_subtokens': False,
             'code_mark_subtoken_end': True,
@@ -26,8 +26,8 @@ class ElmoModel(Model):
                  log_save_dir: Optional[str] = None):
         super().__init__(
             hyperparameters,
-            code_encoder_type=RNNEncoder,
-            query_encoder_type=RNNEncoder,
+            code_encoder_type=ElmoModel,
+            query_encoder_type=ElmoModel,
             run_name=run_name,
             model_save_dir=model_save_dir,
             log_save_dir=log_save_dir)
