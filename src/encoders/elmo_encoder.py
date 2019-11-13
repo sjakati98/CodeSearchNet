@@ -49,10 +49,13 @@ class ElmoEncoder(SeqEncoder):
                                shape=[None],
                                name='tokens_lengths')
 
-            seq_tokens = self.placeholders['tokens']
-            seq_tokens_embeddings = self.embedding_layer(seq_tokens)
-            seq_tokens_lengths = self.placeholders['tokens_lengths']
+            self.placeholders['tokens_str'] = \
+            tf.placeholder(tf.string,
+                           shape=[None, self.get_hyper('max_num_tokens')],
+                           name='tokens_str')
 
+            seq_tokens = self.placeholders['tokens_str']
+            seq_tokens_lengths = self.placeholders['tokens_lengths']
 
             ## pull elmo model from tensorflow hub
             elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=is_train)
@@ -82,9 +85,11 @@ class ElmoEncoder(SeqEncoder):
         super().init_minibatch(batch_data)
         batch_data['tokens'] = []
         batch_data['tokens_lengths'] = []
+        batch_data['tokens_str'] = []
 
     def minibatch_to_feed_dict(self, batch_data: Dict[str, Any], feed_dict: Dict[tf.Tensor, Any], is_train: bool) -> None:
         super().minibatch_to_feed_dict(batch_data, feed_dict, is_train)
 
         write_to_feed_dict(feed_dict, self.placeholders['tokens'], batch_data['tokens'])
         write_to_feed_dict(feed_dict, self.placeholders['tokens_lengths'], batch_data['tokens_lengths'])
+        write_to_feed_dict(feed_dict, self.placeholders['tokens_str'], batch_data['tokens_str'])

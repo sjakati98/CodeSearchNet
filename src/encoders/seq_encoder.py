@@ -154,6 +154,7 @@ class SeqEncoder(Encoder):
                 result_holder[f'{encoder_label}_tokens_{key}'] = None
                 result_holder[f'{encoder_label}_tokens_mask_{key}'] = None
                 result_holder[f'{encoder_label}_tokens_length_{key}'] = None
+                result_holder[f'{encoder_label}_tokens_str_{key}'] = None
                 continue
             if hyperparameters[f'{encoder_label}_use_subtokens']:
                 data = cls._to_subtoken_stream(data,
@@ -167,6 +168,7 @@ class SeqEncoder(Encoder):
             result_holder[f'{encoder_label}_tokens_{key}'] = tokens
             result_holder[f'{encoder_label}_tokens_mask_{key}'] = tokens_mask
             result_holder[f'{encoder_label}_tokens_length_{key}'] = int(np.sum(tokens_mask))
+            result_holder[f'{encoder_label}_tokens_str_{key}'] = list(data)
 
         if result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'] is None or \
                 int(np.sum(result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'])) == 0:
