@@ -20,6 +20,7 @@ class SeqEncoder(Encoder):
         encoder_hypers = { 'token_vocab_size': 10000,
                            'token_vocab_count_threshold': 10,
                            'token_embedding_size': 128,
+                           'seq_embedding_size': 128,
 
                            'use_subtokens': False,
                            'mark_subtoken_end': False,
@@ -41,6 +42,10 @@ class SeqEncoder(Encoder):
             assert not hyperparameters['%s_use_subtokens' % label], 'Subtokens cannot be used along with BPE.'
         elif hyperparameters['%s_use_subtokens' % label]:
             assert not hyperparameters['%s_use_bpe' % label], 'Subtokens cannot be used along with BPE.'
+
+    @property
+    def output_representation_size(self):
+        return self.get_hyper('seq_embedding_size')
 
     def _make_placeholders(self):
         """
