@@ -15,7 +15,7 @@ LSTM2 = 'lstm2'
 WORD = 'word_emb'
 ## Pool Type
 ELMO_FINAL = 'elmo_final'
-ELMO_MEAN = 'elmo_weighted_mean'
+ELMO_MEAN = 'weighted_mean'
 
 class ElmoEncoder(SeqEncoder):
     @classmethod
