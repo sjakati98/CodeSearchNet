@@ -119,12 +119,12 @@ def pool_sequence_embedding(pool_mode: str,
          the mean.
 
          Concat pooling, as introduced in this paper https://arxiv.org/pdf/1801.06146.pdf, 
-         concatenates the mean and max pool of the hidden states to the final hidden state.
-         For our implementation, we make the assumption that the embedding size has been 
-         adaquately adjusted to be three times the final hidden dim hyperparameter of the 
-         model that is being used. For example, if the embedding size is 128 (default) and
-         the encoder is an RNN, then the hyperparameter 'rnn_hidden_dim' must be set to 
-         floor(128/3) for a unidirectional model and floor(64/3) for a bidirectional model.
+         concatenates the mean and max pool of all hidden states to the final hidden state.
+         For our implementation, we make the assumption that the sequence embedding size 
+         has been adaquately set to be three times the token embedding size.
+         
+         Note that as before, the final hidden dim hyperparameter of the encoder being used
+         must correctly correspond to the token embedding size.
 
         sequence_token_embeddings: A float32 tensor of shape [B, T, D], where B is the
          batch dimension, T is the maximal number of tokens per sequence, and D is
