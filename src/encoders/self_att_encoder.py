@@ -24,10 +24,6 @@ class SelfAttentionEncoder(MaskedSeqEncoder):
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
 
-    @property
-    def output_representation_size(self):
-        return self.get_hyper('self_attention_hidden_size')
-
     def make_model(self, is_train: bool = False) -> tf.Tensor:
         with tf.variable_scope("self_attention_encoder"):
             self._make_placeholders()
