@@ -168,9 +168,25 @@ def pool_sequence_embedding(pool_mode: str,
         seq_token_embeddings_masked = \
             sequence_token_embeddings * tf.expand_dims(sequence_token_masks, axis=-1)  # B x T x D
         
-        return tf.concat( [ tf.squeeze(seq_token_embeddings_masked[:, -1, :]),                              # last hidden state, squeeze from B x 1 x D to B x D
-                            max_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks),    # max pool, B x D
-                            mean_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)    # mean pool, B x D
-                          ] , axis=1)                                                                       # concat pool, B x 3*D (refer to note above about increased embedding size)
+        last_hidden_states = seq_token_embeddings_masked[:, -1]
+
+        mxp = max_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
+        mnp = mean_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
+
+        # check if the last hidden states needs to be expanded or squeezed
+        last_hidden_states = tf.cond(
+            tf.equal(tf.rank(last_hidden_states), 1),
+            lambda: tf.expand_dims(last_hidden_states, 0),
+            lambda: tf.cond(
+                tf.math.greater_equal(tf.rank(last_hidden_states), 3),
+                lambda: tf.squeeze(last_hidden_states),
+                lambda: last_hidden_states
+            )
+        )
+        
+        return tf.concat( [ last_hidden_states,  # last hidden states, squeezed from B x 1 x D to B x D
+                            mxp,                 # max pool, B x D
+                            mnp                  # mean pool, B x D
+                          ] , axis=-1)           # concat pool, B x 3*D (refer to note above about increased seq embedding size)
     else:
         raise ValueError("Unknown sequence pool mode '%s'!" % pool_mode)
