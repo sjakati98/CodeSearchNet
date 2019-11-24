@@ -28,4 +28,5 @@ class NBoWEncoder(MaskedSeqEncoder):
             return pool_sequence_embedding(self.get_hyper('nbow_pool_mode').lower(),
                                            sequence_token_embeddings=seq_tokens_embeddings,
                                            sequence_lengths=seq_token_lengths,
-                                           sequence_token_masks=seq_token_mask)
+                                           sequence_token_masks=seq_token_mask,
+                                           is_train=is_train)

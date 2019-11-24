@@ -107,7 +107,8 @@ def get_activation(activation_fun: Optional[str]):
 def pool_sequence_embedding(pool_mode: str,
                             sequence_token_embeddings: tf.Tensor,
                             sequence_lengths: tf.Tensor,
-                            sequence_token_masks: tf.Tensor) -> tf.Tensor:
+                            sequence_token_masks: tf.Tensor,
+                            is_train: bool) -> tf.Tensor:
     """
     Takes a batch of sequences of token embeddings and applies a pooling function,
     returning one representation for each sequence.
@@ -134,6 +135,8 @@ def pool_sequence_embedding(pool_mode: str,
 
         sequence_token_masks: A float32 tensor of shape [B, T] with 0/1 values used
          for masking out unused entries in sequence_embeddings.
+
+        is_train: A boolean which denotes whether or not the model is being trained.
     Returns:
         A tensor of shape [B, D], containing the pooled representation for each
         sequence.
@@ -170,19 +173,12 @@ def pool_sequence_embedding(pool_mode: str,
         
         last_hidden_states = seq_token_embeddings_masked[:, -1]
 
-        mxp = max_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
-        mnp = mean_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
+        # squeeze to correct dim if training
+        if is_train:
+            last_hidden_states = tf.squeeze(last_hidden_states)
 
-        # check if the last hidden states needs to be expanded or squeezed
-        last_hidden_states = tf.cond(
-            tf.equal(tf.rank(last_hidden_states), 1),
-            lambda: tf.expand_dims(last_hidden_states, 0),
-            lambda: tf.cond(
-                tf.math.greater_equal(tf.rank(last_hidden_states), 3),
-                lambda: tf.squeeze(last_hidden_states),
-                lambda: last_hidden_states
-            )
-        )
+        mxp = max_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)  # B x D
+        mnp = mean_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks) # B x D
         
         return tf.concat( [ last_hidden_states,  # last hidden states, squeezed from B x 1 x D to B x D
                             mxp,                 # max pool, B x D
