@@ -40,7 +40,7 @@ class ElmoEncoder(SeqEncoder):
         else:
             return 1024
     
-    def make_model(self, is_train: bool=False) -> tf.Tensor :
+    def make_model(self, is_train: bool=True) -> tf.Tensor :
         with tf.variable_scope("elmo_encoder"):
             self._make_placeholders()
 
@@ -56,9 +56,13 @@ class ElmoEncoder(SeqEncoder):
 
             seq_tokens = self.placeholders['tokens_str']
             seq_tokens_lengths = self.placeholders['tokens_lengths']
+            
+            ## DEBUGGING: OUTPUT SHAPES
+            print("Sequence Tokens Shape: %s" % seq_tokens.shape)
+            print("Sequence Tokens Lengths: %s" % seq_tokens_lengths)
 
             ## pull elmo model from tensorflow hub
-            elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=is_train)
+            elmo = hub.Module("https://tfhub.dev/google/elmo/1", trainable=is_train)
             token_embeddings = elmo(
                 {
                     "tokens": seq_tokens,
@@ -67,6 +71,8 @@ class ElmoEncoder(SeqEncoder):
                 signature='tokens',
                 as_dict=True
             )[self.get_hyper('embedding_type')] ## [batch_size, max_length, 1024 or 512]
+
+            ## add the elmo model to the trainable variables
 
             output_pool_mode = self.get_hyper('elmo_pool_mode').lower()
             if output_pool_mode is ELMO_FINAL:
