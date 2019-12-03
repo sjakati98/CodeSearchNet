@@ -78,4 +78,5 @@ class ConvSelfAttentionEncoder(MaskedSeqEncoder):
                 return pool_sequence_embedding(output_pool_mode,
                                                sequence_token_embeddings=seq_token_embeddings,
                                                sequence_lengths=seq_token_lengths,
-                                               sequence_token_masks=seq_token_masks)
+                                               sequence_token_masks=seq_token_masks,
+                                               is_train=is_train)

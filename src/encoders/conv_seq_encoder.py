@@ -54,7 +54,8 @@ class ConvolutionSeqEncoder(MaskedSeqEncoder):
             return pool_sequence_embedding(self.get_hyper('1dcnn_pool_mode').lower(),
                                            sequence_token_embeddings=current_embeddings,
                                            sequence_lengths=seq_token_lengths,
-                                           sequence_token_masks=seq_token_mask)
+                                           sequence_token_masks=seq_token_mask,
+                                           is_train=is_train)
 
     def __add_position_encoding(self, seq_inputs: tf.Tensor) -> tf.Tensor:
         position_encoding = self.get_hyper('1dcnn_position_encoding').lower()
