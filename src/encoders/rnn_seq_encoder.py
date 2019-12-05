@@ -170,16 +170,15 @@ class RNNEncoder(SeqEncoder):
 
             if (self.get_hyper('rnn_do_attention') == True):
                 self.batch_seq_len = len(seq_tokens)
-                self.attention = BahdanauAttention(self.batch_seq_len)
+                # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
-                self.weights = torch.zeros([batch_num, 1, batch_seq_len], device=device)
-                self.ctx_v = torch.zeros(x[:, 0:1, :].shape, device=device)
+                self.weights = tf.zeros([batch_num, 1, batch_seq_len])
+                self.ctx_v = tf.zeros(x[:, 0:1, :].shape)
 
                 ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, len(seq_tokens), 1))
-                # Flip dim 0 and 1 of context_vec
 
                 # Concat context vectors and token_embeddings
-
+                self.token_embeddings = tf.concat((self.ctx_v, self.token_embeddings), 1)
 
             output_pool_mode = self.get_hyper('rnn_pool_mode').lower()
             if output_pool_mode == 'rnn_final':
@@ -194,6 +193,7 @@ class RNNEncoder(SeqEncoder):
                                                sequence_lengths=seq_tokens_lengths,
                                                sequence_token_masks=token_mask)
 
+'''
     # Code from TensorFlow
     def attention_helper(self, t):
         x = self.token_embeddings
@@ -203,6 +203,7 @@ class RNNEncoder(SeqEncoder):
         ctx_vec, attn_weights = self.attention(curr_hidden, prev_hiddens)
 
         return ctx_vec, attn_weights
+'''
 
     # Code from HW
     def attention_hw_style(self, t):
