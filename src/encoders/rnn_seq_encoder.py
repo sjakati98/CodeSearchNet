@@ -80,13 +80,6 @@ class RNNEncoder(SeqEncoder):
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
 
-    @property
-    def output_representation_size(self):
-        if self.get_hyper('rnn_is_bidirectional'):
-            return 2 * self.get_hyper('rnn_hidden_dim')
-        else:
-            return self.get_hyper('rnn_hidden_dim')
-
     def _encode_with_rnn(self,
                          inputs: tf.Tensor,
                          input_lengths: tf.Tensor) \
