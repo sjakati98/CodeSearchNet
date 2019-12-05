@@ -71,6 +71,7 @@ class RNNEncoder(SeqEncoder):
                           'rnn_dropout_keep_rate': 0.8,
                           'rnn_recurrent_dropout_keep_rate': 1.0,
                           'rnn_pool_mode': 'weighted_mean',
+                          'rnn_do_attention': True,
                           }
         hypers = super().get_default_hyperparameters()
         hypers.update(encoder_hypers)
@@ -78,6 +79,13 @@ class RNNEncoder(SeqEncoder):
 
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
+
+    @property
+    def output_representation_size(self):
+        if self.get_hyper('rnn_is_bidirectional'):
+            return 2 * self.get_hyper('rnn_hidden_dim')
+        else:
+            return self.get_hyper('rnn_hidden_dim')
 
     def _encode_with_rnn(self,
                          inputs: tf.Tensor,
@@ -159,7 +167,26 @@ class RNNEncoder(SeqEncoder):
             seq_tokens_embeddings = self.embedding_layer(seq_tokens)
             seq_tokens_lengths = self.placeholders['tokens_lengths']
 
-            rnn_final_state, token_embeddings = self._encode_with_rnn(seq_tokens_embeddings, seq_tokens_lengths)
+            rnn_final_state, self.token_embeddings = self._encode_with_rnn(seq_tokens_embeddings, seq_tokens_lengths)
+
+            # TODO: Add call for Attention code.
+            # Try to use batch queries so you can do bmm (TensorFlow equivalent)
+            # Dim: batch_size, max_seq_len, emb_dim
+            # Iterate over max_seq_len. For each token in sequence, do Attention
+            #tf.map_fn -> runs a function over a set of values
+
+            if (self.get_hyper('rnn_do_attention') == True):
+                self.batch_seq_len = len(seq_tokens)
+                self.attention = BahdanauAttention(self.batch_seq_len)
+                # Do attention on each timestep
+                self.weights = torch.zeros([batch_num, 1, batch_seq_len], device=device)
+                self.ctx_v = torch.zeros(x[:, 0:1, :].shape, device=device)
+
+                ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, len(seq_tokens), 1))
+                # Flip dim 0 and 1 of context_vec
+
+                # Concat context vectors and token_embeddings
+
 
             output_pool_mode = self.get_hyper('rnn_pool_mode').lower()
             if output_pool_mode == 'rnn_final':
@@ -170,10 +197,41 @@ class RNNEncoder(SeqEncoder):
                 token_mask = tf.cast(token_mask < tf.expand_dims(seq_tokens_lengths, axis=-1),
                                      dtype=tf.float32)                                            # B x T
                 return pool_sequence_embedding(output_pool_mode,
-                                               sequence_token_embeddings=token_embeddings,
+                                               sequence_token_embeddings=self.token_embeddings,
                                                sequence_lengths=seq_tokens_lengths,
-                                               sequence_token_masks=token_mask,
-                                               is_train=is_train)
+                                               sequence_token_masks=token_mask)
+
+    # Code from TensorFlow
+    def attention_helper(self, t):
+        x = self.token_embeddings
+        curr_hidden = x[:, t:t+1, :]
+        prev_hiddens = x[:, :t, :]
+
+        ctx_vec, attn_weights = self.attention(curr_hidden, prev_hiddens)
+
+        return ctx_vec, attn_weights
+
+    # Code from HW
+    def attention_hw_style(self, t):
+        x = self.token_embeddings
+        curr_hidden = x[:, t:t+1, :]
+        prev_hiddens = x[:, :t, :]
+
+        prev_hiddens = tf.transpose(prev_hiddens, perm=[1, 2])
+        attn_score = tf.matmul(curr_hidden, prev_hiddens)
+        attn_weight = tf.softmax(attn_score, dim=2)
+
+        attn_weight = tf.transpose(attn_weight, perm=[1, 2])
+        new_ctx = tf.matmul(prev_hiddens, attn_weight)
+
+        # Concat Stuff
+        new_ctx = tf.transpose(new_ctx, 1, 2)
+        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
+        attn_weight = tf.transpose(attn_weight, perm=[1, 2])
+
+        attn_weight = tf.pad(attn_weight, paddings=tf.constant(0, self.batch_seq_len-t), mode="CONSTANT", constant_values=0)
+        self.weights = tf.concat((self.weights, attn_weight), 1)
+
 
     def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
         super().init_minibatch(batch_data)
