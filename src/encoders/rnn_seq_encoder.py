@@ -178,7 +178,6 @@ class RNNEncoder(SeqEncoder):
             if (self.get_hyper('rnn_do_attention') == True):
                 self.batch_seq_len = len(seq_tokens)
                 # self.attention = BahdanauAttention(self.batch_seq_len)
-                
                 # Do attention on each timestep
                 self.weights = tf.zeros([batch_num, 1, batch_seq_len])
                 self.ctx_v = tf.zeros(x[:, 0:1, :].shape)
