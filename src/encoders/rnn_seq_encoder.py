@@ -156,11 +156,11 @@ class RNNEncoder(SeqEncoder):
                                shape=[],
                                name='rnn_recurrent_dropout_keep_rate')
 
-            seq_tokens = self.placeholders['tokens']
-            seq_tokens_embeddings = self.embedding_layer(seq_tokens)
+            self.seq_tokens = self.placeholders['tokens']
+            seq_tokens_embeddings = self.embedding_layer(self.seq_tokens)
             seq_tokens_lengths = self.placeholders['tokens_lengths']
 
-            rnn_final_state, self.token_embeddings = self._encode_with_rnn(seq_tokens_embeddings, seq_tokens_lengths)
+            rnn_final_state, self.token_embeddings = self._encode_with_rnn(self.seq_tokens_embeddings, seq_tokens_lengths)
 
             # TODO: Add call for Attention code.
             # Try to use batch queries so you can do bmm (TensorFlow equivalent)
@@ -169,13 +169,13 @@ class RNNEncoder(SeqEncoder):
             #tf.map_fn -> runs a function over a set of values
 
             if (self.get_hyper('rnn_do_attention') == True):
-                self.batch_seq_len = len(seq_tokens)
+                self.batch_seq_len = tf.shape(self.seq_tokens)
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
-                self.weights = tf.zeros([batch_num, 1, batch_seq_len])
+                self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 self.ctx_v = tf.zeros(x[:, 0:1, :].shape)
 
-                ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, len(seq_tokens), 1))
+                ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, tf.shape(self.seq_tokens), 1))
 
                 # Concat context vectors and token_embeddings
                 self.token_embeddings = tf.concat((self.ctx_v, self.token_embeddings), 1)
@@ -184,7 +184,7 @@ class RNNEncoder(SeqEncoder):
             if output_pool_mode == 'rnn_final':
                 return rnn_final_state
             else:
-                token_mask = tf.expand_dims(tf.range(tf.shape(seq_tokens)[1]), axis=0)            # 1 x T
+                token_mask = tf.expand_dims(tf.range(tf.shape(self.seq_tokens)[1]), axis=0)            # 1 x T
                 token_mask = tf.tile(token_mask, multiples=(tf.shape(seq_tokens_lengths)[0], 1))  # B x T
                 token_mask = tf.cast(token_mask < tf.expand_dims(seq_tokens_lengths, axis=-1),
                                      dtype=tf.float32)                                            # B x T
