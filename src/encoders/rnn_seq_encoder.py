@@ -225,6 +225,7 @@ class RNNEncoder(SeqEncoder):
 
         attn_weight = tf.pad(attn_weight, paddings=tf.constant(0, self.batch_seq_len-t), mode="CONSTANT", constant_values=0)
         self.weights = tf.concat((self.weights, attn_weight), 1)
+        return self.ctx_v, attn_weight
 
 
     def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
