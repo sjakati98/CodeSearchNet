@@ -160,7 +160,7 @@ class RNNEncoder(SeqEncoder):
             seq_tokens_embeddings = self.embedding_layer(self.seq_tokens)
             seq_tokens_lengths = self.placeholders['tokens_lengths']
 
-            rnn_final_state, self.token_embeddings = self._encode_with_rnn(self.seq_tokens_embeddings, seq_tokens_lengths)
+            rnn_final_state, self.token_embeddings = self._encode_with_rnn(seq_tokens_embeddings, seq_tokens_lengths)
 
             # TODO: Add call for Attention code.
             # Try to use batch queries so you can do bmm (TensorFlow equivalent)
