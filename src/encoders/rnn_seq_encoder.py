@@ -193,7 +193,7 @@ class RNNEncoder(SeqEncoder):
                                                sequence_lengths=seq_tokens_lengths,
                                                sequence_token_masks=token_mask)
 
-'''
+    '''
     # Code from TensorFlow
     def attention_helper(self, t):
         x = self.token_embeddings
@@ -203,7 +203,7 @@ class RNNEncoder(SeqEncoder):
         ctx_vec, attn_weights = self.attention(curr_hidden, prev_hiddens)
 
         return ctx_vec, attn_weights
-'''
+    '''
 
     # Code from HW
     def attention_hw_style(self, t):
