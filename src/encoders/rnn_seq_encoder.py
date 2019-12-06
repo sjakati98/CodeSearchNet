@@ -174,7 +174,7 @@ class RNNEncoder(SeqEncoder):
                 # Do attention on each timestep
                 batch_num = tf.shape(self.token_embeddings)[0]
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
-                self.ctx_v = tf.zeros(x[:, 0:1, :].shape)
+                self.ctx_v = tf.zeros(tf.shape(x[:, 0:1, :]))
 
                 ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, tf.shape(self.seq_tokens), 1))
 
