@@ -172,7 +172,11 @@ class RNNEncoder(SeqEncoder):
                 self.batch_seq_len = tf.shape(self.seq_tokens)
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
+<<<<<<< HEAD
                 batch_num = self.token_embeddings.shape.dims[0].rank
+=======
+                batch_num = self.token_embeddings.shape[0].value
+>>>>>>> dfd12e82d28f63de47ae99e5dbb22dd0b5ed568d
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 self.ctx_v = tf.zeros(tf.shape(x[:, 0:1, :]))
 
