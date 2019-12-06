@@ -172,6 +172,7 @@ class RNNEncoder(SeqEncoder):
                 self.batch_seq_len = tf.shape(self.seq_tokens)
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
+                batch_num = tf.shape(self.token_embeddings)[0]
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 self.ctx_v = tf.zeros(x[:, 0:1, :].shape)
 
@@ -184,7 +185,7 @@ class RNNEncoder(SeqEncoder):
             if output_pool_mode == 'rnn_final':
                 return rnn_final_state
             else:
-                token_mask = tf.expand_dims(tf.range(tf.shape(self.seq_tokens)[1]), axis=0)            # 1 x T
+                token_mask = tf.expand_dims(tf.range(tf.shape(self.seq_tokens)[1]), axis=0)       # 1 x T
                 token_mask = tf.tile(token_mask, multiples=(tf.shape(seq_tokens_lengths)[0], 1))  # B x T
                 token_mask = tf.cast(token_mask < tf.expand_dims(seq_tokens_lengths, axis=-1),
                                      dtype=tf.float32)                                            # B x T
