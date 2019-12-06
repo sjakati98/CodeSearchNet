@@ -176,6 +176,7 @@ class RNNEncoder(SeqEncoder):
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 self.ctx_v = tf.zeros(tf.shape(x[:, 0:1, :]))
 
+                # run attention_hw_style on all tokens
                 ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, tf.shape(self.seq_tokens), 1))
 
                 # Concat context vectors and token_embeddings
