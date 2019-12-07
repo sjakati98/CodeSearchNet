@@ -170,7 +170,7 @@ class SeqEncoder(Encoder):
             result_holder[f'{encoder_label}_tokens_length_{key}'] = int(np.sum(tokens_mask))
             result_holder[f'{encoder_label}_tokens_str_{key}'] = list(data)
 
-            print(list(data))
+            # print(list(data))
 
         if result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'] is None or \
                 int(np.sum(result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'])) == 0:

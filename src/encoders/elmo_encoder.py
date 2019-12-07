@@ -46,23 +46,23 @@ class ElmoEncoder(SeqEncoder):
 
             self.placeholders['tokens_lengths'] = \
                 tf.placeholder(tf.int32,
-                               shape=[None],
+                               shape=[1000],
                                name='tokens_lengths')
 
             self.placeholders['tokens_str'] = \
             tf.placeholder(tf.string,
-                           shape=[None, self.get_hyper('max_num_tokens')],
+                           shape=[1000, self.get_hyper('max_num_tokens')],
                            name='tokens_str')
 
             seq_tokens = self.placeholders['tokens_str']
             seq_tokens_lengths = self.placeholders['tokens_lengths']
             
-            ## DEBUGGING: OUTPUT SHAPES
-            print("Sequence Tokens Shape: %s" % seq_tokens.shape)
-            print("Sequence Tokens Lengths: %s" % seq_tokens_lengths)
+            # ## DEBUGGING: OUTPUT SHAPES
+            # print("Sequence Tokens Shape: %s" % seq_tokens.shape)
+            # print("Sequence Tokens Lengths: %s" % seq_tokens_lengths)
 
             ## pull elmo model from tensorflow hub
-            elmo = hub.Module("https://tfhub.dev/google/elmo/1", trainable=is_train)
+            elmo = hub.Module("https://tfhub.dev/google/elmo/3", trainable=is_train)
             token_embeddings = elmo(
                 {
                     "tokens": seq_tokens,
