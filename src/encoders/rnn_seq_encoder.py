@@ -173,14 +173,21 @@ class RNNEncoder(SeqEncoder):
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
                 batch_num = 100
+                print("Starting Attention Setup")
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
-                self.ctx_v = tf.zeros(tf.shape(x[:, 0:1, :]))
+                print("Set up Weights")
+                self.ctx_v = tf.zeros(tf.shape(self.token_embeddings[:, 0:1, :]))
+                print("Set up Context Vector")
 
                 # run attention_hw_style on all tokens
+                print("Running Attention")
                 ctx_vec, attn_weights = tf.map_fn(attention_hw_style, tf.range(0, tf.shape(self.seq_tokens), 1))
 
+                print("Concatenating Context Vectors with Token Embeddings")
                 # Concat context vectors and token_embeddings
                 self.token_embeddings = tf.concat((self.ctx_v, self.token_embeddings), 1)
+
+                print("Running the rest of the model")
 
             output_pool_mode = self.get_hyper('rnn_pool_mode').lower()
             if output_pool_mode == 'rnn_final':
