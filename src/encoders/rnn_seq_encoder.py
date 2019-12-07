@@ -181,7 +181,7 @@ class RNNEncoder(SeqEncoder):
 
                 # run attention_hw_style on all tokens
                 print("Running Attention")
-                ctx_vec, attn_weights = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1))
+                ctx_vec = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1))
 
                 print("Concatenating Context Vectors with Token Embeddings")
                 # Concat context vectors and token_embeddings
@@ -230,12 +230,8 @@ class RNNEncoder(SeqEncoder):
         # Concat Stuff
         new_ctx = tf.transpose(new_ctx, perm=[0, 2, 1])
         self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
-        attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
 
-        padding = tf.constant([[1, 0, ],[2, self.batch_seq_len-t]])
-        attn_weight = tf.pad(attn_weight, paddings=padding, mode="CONSTANT", constant_values=0)
-        self.weights = tf.concat((self.weights, attn_weight), 1)
-        return new_ctx, attn_weight
+        return new_ctx
 
 
     def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
