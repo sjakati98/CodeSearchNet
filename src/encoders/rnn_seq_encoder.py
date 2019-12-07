@@ -220,7 +220,7 @@ class RNNEncoder(SeqEncoder):
         curr_hidden = x[:, t:t+1, :]
         prev_hiddens = x[:, :t, :]
 
-        prev_hiddens = tf.transpose(prev_hiddens, perm=[1, 2])
+        prev_hiddens = tf.transpose(prev_hiddens, perm=[0, 2, 1])
         attn_score = tf.matmul(curr_hidden, prev_hiddens)
         attn_weight = tf.softmax(attn_score, dim=2)
 
