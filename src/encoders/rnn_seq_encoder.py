@@ -228,7 +228,7 @@ class RNNEncoder(SeqEncoder):
         new_ctx = tf.matmul(prev_hiddens, attn_weight)
 
         # Concat Stuff
-        new_ctx = tf.transpose(new_ctx, 1, 2)
+        new_ctx = tf.transpose(new_ctx, perm=[0, 2, 1])
         self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
         attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
 
