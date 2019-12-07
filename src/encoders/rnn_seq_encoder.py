@@ -222,15 +222,15 @@ class RNNEncoder(SeqEncoder):
 
         prev_hiddens = tf.transpose(prev_hiddens, perm=[0, 2, 1])
         attn_score = tf.matmul(curr_hidden, prev_hiddens)
-        attn_weight = tf.softmax(attn_score, dim=2)
+        attn_weight = tf.nn.softmax(attn_score, dim=2)
 
-        attn_weight = tf.transpose(attn_weight, perm=[1, 2])
+        attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
         new_ctx = tf.matmul(prev_hiddens, attn_weight)
 
         # Concat Stuff
         new_ctx = tf.transpose(new_ctx, 1, 2)
         self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
-        attn_weight = tf.transpose(attn_weight, perm=[1, 2])
+        attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
 
         attn_weight = tf.pad(attn_weight, paddings=tf.constant(0, self.batch_seq_len-t), mode="CONSTANT", constant_values=0)
         self.weights = tf.concat((self.weights, attn_weight), 1)
