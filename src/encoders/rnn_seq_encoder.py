@@ -232,7 +232,7 @@ class RNNEncoder(SeqEncoder):
         self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
         attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
 
-        padding = tf.constant([[1, 0], [2, self.batch_seq_len-t]])
+        padding = tf.constant([[1, 0],[2, self.batch_seq_len-t]])
         attn_weight = tf.pad(attn_weight, paddings=padding, mode="CONSTANT", constant_values=0)
         self.weights = tf.concat((self.weights, attn_weight), 1)
         return new_ctx, attn_weight
