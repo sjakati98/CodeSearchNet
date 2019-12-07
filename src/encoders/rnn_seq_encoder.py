@@ -169,12 +169,12 @@ class RNNEncoder(SeqEncoder):
             #tf.map_fn -> runs a function over a set of values
 
             if (self.get_hyper('rnn_do_attention') == True):
-                self.batch_seq_len = tf.shape(self.seq_tokens)
+                self.batch_seq_len = self.seq_tokens.get_shape()
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
                 print("Batch Seq Len: ", self.batch_seq_len)
-                print("Token Embeddings: ", self.get_hyper("code_batch_size"))
-                batch_num = self.token_embeddings.shape.dims[1].value
+                print("Token Embeddings: ", self.get_hyper("batch_size"))
+                batch_num = 100
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 self.ctx_v = tf.zeros(tf.shape(x[:, 0:1, :]))
 
