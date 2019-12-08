@@ -185,7 +185,8 @@ class RNNEncoder(SeqEncoder):
 
                 print("Concatenating Context Vectors with Token Embeddings")
                 # Concat context vectors and token_embeddings
-                embeds = tf.concat((self.token_embeddings, self.ctx_v), 1)
+                ctx = self.ctx_v
+                embeds = tf.concat((self.token_embeddings, ctx), 1)
                 self.token_embeddings = embeds
 
                 print("Running the rest of the model")
@@ -223,7 +224,7 @@ class RNNEncoder(SeqEncoder):
 
         prev_hiddens = tf.transpose(prev_hiddens, perm=[0, 2, 1])
         attn_score = tf.matmul(curr_hidden, prev_hiddens)
-        attn_weight = tf.nn.softmax(attn_score, dim=2)
+        attn_weight = tf.nn.softmax(attn_score, axis=2)
 
         attn_weight = tf.transpose(attn_weight, perm=[0, 2, 1])
         new_ctx = tf.matmul(prev_hiddens, attn_weight)
