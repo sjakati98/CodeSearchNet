@@ -181,7 +181,7 @@ class RNNEncoder(SeqEncoder):
 
                 # run attention_hw_style on all tokens
                 print("Running Attention")
-                ctx_vec = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1))
+                tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1), parallel_iterations=1)
 
                 print("Concatenating Context Vectors with Token Embeddings")
                 # Concat context vectors and token_embeddings
