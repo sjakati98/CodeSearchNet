@@ -211,7 +211,8 @@ class RNNEncoder(SeqEncoder):
                 return pool_sequence_embedding(output_pool_mode,
                                                sequence_token_embeddings=self.token_embeddings,
                                                sequence_lengths=seq_tokens_lengths,
-                                               sequence_token_masks=token_mask)
+                                               sequence_token_masks=token_mask,
+                                               is_train=is_train)
 
     '''
     # Code from TensorFlow
