@@ -74,7 +74,7 @@ class ElmoEncoder(SeqEncoder):
                 },
                 signature='tokens',
                 as_dict=True
-            )[self.get_hyper('embedding_type')] ## [batch_size, max_length, 1024 or 512]
+            )['elmo'] ## [batch_size, max_length, 1024 or 512]
 
             ## add the elmo model to the trainable variables
 
