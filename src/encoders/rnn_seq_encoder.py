@@ -235,7 +235,7 @@ class RNNEncoder(SeqEncoder):
 
         # Concat Stuff
         new_ctx = tf.transpose(new_ctx, perm=[0, 2, 1])
-        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 0)
+        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 2)
 
         return new_ctx
 
