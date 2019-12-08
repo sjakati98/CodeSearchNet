@@ -69,7 +69,7 @@ class ElmoEncoder(SeqEncoder):
             elmo = hub.Module("https://tfhub.dev/google/elmo/2", trainable=is_train)
             token_embeddings = elmo(
                 {
-                    "tokens": seq_tokens,
+                    "tokens": tf.squeeze(seq_tokens),
                     "sequence_len": seq_tokens_lengths
                 },
                 signature='tokens',
