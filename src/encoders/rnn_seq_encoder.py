@@ -185,12 +185,14 @@ class RNNEncoder(SeqEncoder):
 
                 print("Concatenating Context Vectors with Token Embeddings")
 
+                context_list = tf.transpose(context_list, perm=[0, 2, 1])
+                context = tf.concat(context_list, 1)
 
                 # Concat context vectors and token_embeddings
                 ctx = self.ctx_v
                 print("Token Embeddings: ", self.token_embeddings.shape)
-                print("Context Vectors: ", ctx.shape)
-                embeds = tf.concat((ctx, self.token_embeddings), 2)
+                print("Context Vectors: ", context.shape)
+                embeds = tf.concat((context, self.token_embeddings), 0)
                 self.token_embeddings = embeds
 
                 print("Running the rest of the model")
