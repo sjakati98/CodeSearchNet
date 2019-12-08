@@ -46,12 +46,12 @@ class ElmoEncoder(SeqEncoder):
 
             self.placeholders['tokens_lengths'] = \
                 tf.placeholder(tf.int32,
-                               shape=[1000],
+                               shape=[None],
                                name='tokens_lengths')
 
             self.placeholders['tokens_str'] = \
             tf.placeholder(tf.string,
-                           shape=[1000, self.get_hyper('max_num_tokens')],
+                           shape=[None, self.get_hyper('max_num_tokens')],
                            name='tokens_str')
 
             seq_tokens = self.placeholders['tokens_str']
