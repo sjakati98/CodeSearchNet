@@ -183,9 +183,6 @@ class RNNEncoder(SeqEncoder):
                 print("Running Attention")
                 context_list = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1), parallel_iterations=1, dtype=(tf.float32))
 
-                #concat context vectors
-                context = tf.stack(context_list)
-
                 print("Concatenating Context Vectors with Token Embeddings")
 
 
@@ -238,7 +235,7 @@ class RNNEncoder(SeqEncoder):
 
         # Concat Stuff
         new_ctx = tf.transpose(new_ctx, perm=[0, 2, 1])
-        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 0)
+        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 1)
 
         return new_ctx
 
