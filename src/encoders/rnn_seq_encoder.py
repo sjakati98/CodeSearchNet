@@ -168,6 +168,7 @@ class RNNEncoder(SeqEncoder):
             # Iterate over max_seq_len. For each token in sequence, do Attention
             #tf.map_fn -> runs a function over a set of values
 
+            embeds = self.token_embeddings
             if (self.get_hyper('rnn_do_attention') == True):
                 self.batch_seq_len = self.seq_tokens.get_shape().dims[1].value
                 # self.attention = BahdanauAttention(self.batch_seq_len)
@@ -195,8 +196,8 @@ class RNNEncoder(SeqEncoder):
                 ctx = self.ctx_v
                 print("Token Embeddings: ", self.token_embeddings.shape)
                 print("Context Vectors: ", context.shape)
-                embeds = tf.concat((context, self.token_embeddings), 2)
-                self.token_embeddings = embeds
+                embeds = tf.concat((context, self.token_embeddings), 0)
+                
 
                 print("Running the rest of the model")
 
@@ -209,7 +210,7 @@ class RNNEncoder(SeqEncoder):
                 token_mask = tf.cast(token_mask < tf.expand_dims(seq_tokens_lengths, axis=-1),
                                      dtype=tf.float32)                                            # B x T
                 return pool_sequence_embedding(output_pool_mode,
-                                               sequence_token_embeddings=self.token_embeddings,
+                                               sequence_token_embeddings=embeds,
                                                sequence_lengths=seq_tokens_lengths,
                                                sequence_token_masks=token_mask,
                                                is_train=is_train)
