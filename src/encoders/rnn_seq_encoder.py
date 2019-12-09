@@ -191,7 +191,7 @@ class RNNEncoder(SeqEncoder):
 
                 context = tf.transpose(context, perm=[1, 0, 2])
 
-                seq_tokens_lengths += seq_tokens_lengths
+
 
 
                 # Concat context vectors and token_embeddings
@@ -209,6 +209,8 @@ class RNNEncoder(SeqEncoder):
             else:
                 token_mask = tf.expand_dims(tf.range(tf.shape(self.seq_tokens)[1]), axis=0)       # 1 x T
                 token_mask = tf.tile(token_mask, multiples=(tf.shape(seq_tokens_lengths)[0], 1))  # B x T
+                if (self.get_hyper("rnn_do_attention")):
+                    token_mask = tf.tile(token_mask, multiples=(tf.shape(seq_tokens_lengths)[0]*2, 1))  # B x T
                 token_mask = tf.cast(token_mask < tf.expand_dims(seq_tokens_lengths, axis=-1),
                                      dtype=tf.float32)                                            # B x T
                 return pool_sequence_embedding(output_pool_mode,
