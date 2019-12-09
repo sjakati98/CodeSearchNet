@@ -177,7 +177,7 @@ class RNNEncoder(SeqEncoder):
                 print("Starting Attention Setup")
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
                 print("Set up Weights")
-                self.ctx_v = tf.zeros(tf.shape(self.token_embeddings[:, 0:1, :]))
+                # self.ctx_v = tf.zeros(tf.shape(self.token_embeddings[:, 0:1, :]))
                 print("Set up Context Vector")
 
                 # run attention_hw_style on all tokens
@@ -192,7 +192,7 @@ class RNNEncoder(SeqEncoder):
                 context = tf.transpose(context, perm=[1, 0, 2])
 
                 # Concat context vectors and token_embeddings
-                ctx = self.ctx_v
+                # ctx = self.ctx_v
                 print("Token Embeddings: ", self.token_embeddings.shape)
                 print("Context Vectors: ", context.shape)
                 embeds = tf.concat((context, self.token_embeddings), 1)
@@ -243,7 +243,7 @@ class RNNEncoder(SeqEncoder):
 
         # Concat Stuff
         new_ctx = tf.transpose(new_ctx, perm=[0, 2, 1])
-        self.ctx_v = tf.concat((self.ctx_v, new_ctx), 2)
+        # self.ctx_v = tf.concat((self.ctx_v, new_ctx), 2)
 
         return new_ctx
 
