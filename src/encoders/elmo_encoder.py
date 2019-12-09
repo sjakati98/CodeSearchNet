@@ -2,6 +2,7 @@ from typing import Dict, Any, Union, Tuple
 
 import tensorflow as tf
 import tensorflow_hub as hub
+import numpy as np
 
 from .seq_encoder import SeqEncoder
 from utils.tfutils import write_to_feed_dict, pool_sequence_embedding
@@ -63,13 +64,11 @@ class ElmoEncoder(SeqEncoder):
             tf.print("Seq Tokens Shape: ", tf.shape(seq_tokens))
             tf.print("Seq Tokens Lengths Shape: ", tf.shape(seq_tokens_lengths))
 
-
-
             ## pull elmo model from tensorflow hub
             elmo = hub.Module("https://tfhub.dev/google/elmo/2", trainable=is_train)
             token_embeddings = elmo(
                 {
-                    "tokens": tf.squeeze(seq_tokens),
+                    "tokens": np.squeeze(seq_tokens.eval()),
                     "sequence_len": seq_tokens_lengths
                 },
                 signature='tokens',
