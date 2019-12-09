@@ -154,7 +154,7 @@ def pool_sequence_embedding(pool_mode: str,
         sequence_token_masks = tf.expand_dims(sequence_token_masks, axis=-1)  # B x T x 1
         return tf.reduce_max(sequence_token_embeddings + sequence_token_masks, axis=1) # B x D
 
-    def __concat_pool__(sequence_token_embeddings, sequence_lengths, sequence_token_masks):
+    def __weighted_average__(sequence_token_embeddings, sequence_lengths, sequence_token_masks):
         token_weights = tf.layers.dense(sequence_token_embeddings,
                                         units=1,
                                         activation=tf.sigmoid,
@@ -168,7 +168,7 @@ def pool_sequence_embedding(pool_mode: str,
     elif pool_mode == 'max':
         return max_pool(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
     elif pool_mode == 'weighted_mean':
-        return __concat_pool__(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
+        return __weighted_average__(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
 
     elif pool_mode == 'concat':
 
@@ -195,7 +195,7 @@ def pool_sequence_embedding(pool_mode: str,
         #     sequence_token_embeddings * tf.expand_dims(sequence_token_masks, axis=-1)  # B x T x D
         
         # last_hidden_states = seq_token_embeddings_masked[:, -1]
-        last_hidden_states = __concat_pool__(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
+        last_hidden_states = __weighted_average__(sequence_token_embeddings, sequence_lengths, sequence_token_masks)
 
         # squeeze to correct dim if training
         if is_train:
