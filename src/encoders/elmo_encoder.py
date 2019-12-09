@@ -61,16 +61,12 @@ class ElmoEncoder(SeqEncoder):
             # ## DEBUGGING: OUTPUT SHAPES
             # print("Sequence Tokens Shape: %s" % seq_tokens.shape)
             # print("Sequence Tokens Lengths: %s" % seq_tokens_lengths)
-            tf.print("Seq Tokens Shape: ", tf.shape(seq_tokens))
-            tf.print("Seq Tokens Lengths Shape: ", tf.shape(seq_tokens_lengths))
-
-            print(np.squeeze(seq_tokens.eval()).shape)
 
             ## pull elmo model from tensorflow hub
             elmo = hub.Module("https://tfhub.dev/google/elmo/2", trainable=is_train)
             token_embeddings = elmo(
                 {
-                    "tokens": np.squeeze(seq_tokens.eval()),
+                    "tokens": seq_tokens,
                     "sequence_len": seq_tokens_lengths
                 },
                 signature='tokens',
