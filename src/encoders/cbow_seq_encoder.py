@@ -46,6 +46,6 @@ class CBoWEncoder(MaskedSeqEncoder):
     def token_sums(self, t):
         x = self.seq_tokens_embeddings
 
-        context = tf.concat( [ x[:, t:t+2, :], x[:, t+3:t+5, :] ], dim=1) # batch size x 4 x emb dim
+        context = tf.concat( [ x[:, t:t+2, :], x[:, t+3:t+5, :] ], axis=1) # batch size x 4 x emb dim
 
         return tf.reduce_sum(context, 1) # batch size x emb dim
