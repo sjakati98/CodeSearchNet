@@ -174,17 +174,17 @@ class RNNEncoder(SeqEncoder):
                 # self.attention = BahdanauAttention(self.batch_seq_len)
                 # Do attention on each timestep
                 batch_num = 100
-                print("Starting Attention Setup")
+                # print("Starting Attention Setup")
                 self.weights = tf.zeros([batch_num, 1, self.batch_seq_len])
-                print("Set up Weights")
+                # print("Set up Weights")
                 # self.ctx_v = tf.zeros(tf.shape(self.token_embeddings[:, 0:1, :]))
-                print("Set up Context Vector")
+                # print("Set up Context Vector")
 
                 # run attention_hw_style on all tokens
-                print("Running Attention")
+                # print("Running Attention")
                 context_list = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1), parallel_iterations=1, dtype=(tf.float32))
 
-                print("Concatenating Context Vectors with Token Embeddings")
+                # print("Concatenating Context Vectors with Token Embeddings")
 
                 # if (size == 4), squeeze, else dont
                 if (len(context_list.shape.dims) == 4):
@@ -199,12 +199,12 @@ class RNNEncoder(SeqEncoder):
 
                 # Concat context vectors and token_embeddings
                 # ctx = self.ctx_v
-                print("Token Embeddings: ", self.token_embeddings.shape)
-                print("Context Vectors: ", context.shape)
+                # print("Token Embeddings: ", self.token_embeddings.shape)
+                # print("Context Vectors: ", context.shape)
                 embeds = tf.concat((context, self.token_embeddings), 1)
 
 
-                print("Running the rest of the model")
+                # print("Running the rest of the model")
 
             output_pool_mode = self.get_hyper('rnn_pool_mode').lower()
             if output_pool_mode == 'rnn_final':
