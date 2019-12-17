@@ -182,22 +182,22 @@ class RNNEncoder(SeqEncoder):
 
                 # run attention_hw_style on all tokens
                 # print("Running Attention")
-                context_list = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1), parallel_iterations=1, dtype=(tf.float32))
+                context_list = tf.map_fn(self.attention_hw_style, tf.range(0, self.batch_seq_len, 1), dtype=(tf.float32))
 
                 # print("Concatenating Context Vectors with Token Embeddings")
 
+                context = context_list
                 # if (size == 4), squeeze, else dont
                 if (len(context_list.shape.dims) == 4):
                     context = tf.squeeze(context_list)
-                else:
-                    context = context_list
 
                 context = tf.concat(context, 1)
 
-                if (len(tf.shape(context)) == 3):
-                    context = tf.transpose(context, perm=[1, 0, 2])
-                if (len(tf.shape(context)) == 2):
-                    context = tf.transpose(context, perm=[1, 0])
+                if (context.shape.dims != None):
+                    if (len(context.shape.dims) == 3):
+                        context = tf.transpose(context, perm=[1, 0, 2])
+                    if (len(context.shape.dims) == 2):
+                        context = tf.transpose(context, perm=[1, 0])
 
                 # Concat context vectors and token_embeddings
                 # ctx = self.ctx_v
