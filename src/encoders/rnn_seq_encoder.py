@@ -196,10 +196,12 @@ class RNNEncoder(SeqEncoder):
 
                 # if (context.shape.dims != None):
                 context = tf.transpose(context, tf.concat([1, 0], tf.range(2, tf.rank(context)), 0))
-                    '''if (len(context.shape.dims) == 3):
+                '''
+                    if (len(context.shape.dims) == 3):
                         context = tf.transpose(context, perm=[1, 0, 2])
                     if (len(context.shape.dims) == 2):
-                        context = tf.transpose(context, perm=[1, 0])'''
+                        context = tf.transpose(context, perm=[1, 0])
+                '''
 
 
                 # Concat context vectors and token_embeddings
