@@ -195,7 +195,10 @@ class RNNEncoder(SeqEncoder):
 
 
                 # if (context.shape.dims != None):
-                context = tf.transpose(context, tf.concat([1, 0], tf.range(2, tf.rank(context)), 0))
+                if (tf.rank(context) > 2):
+                    context = tf.transpose(context, tf.concat([1, 0], tf.range(2, tf.rank(context)), 0))
+                else:
+                    context = tf.transpose(context, [1, 0])
                 '''
                     if (len(context.shape.dims) == 3):
                         context = tf.transpose(context, perm=[1, 0, 2])
