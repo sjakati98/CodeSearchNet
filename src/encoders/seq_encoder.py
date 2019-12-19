@@ -20,7 +20,7 @@ class SeqEncoder(Encoder):
         encoder_hypers = { 'token_vocab_size': 10000,
                            'token_vocab_count_threshold': 10,
                            'token_embedding_size': 128,
-                           'seq_embedding_size': 128,
+                           'seq_embedding_size': None,
 
                            'use_subtokens': False,
                            'mark_subtoken_end': False,
@@ -45,7 +45,7 @@ class SeqEncoder(Encoder):
 
     @property
     def output_representation_size(self):
-        return self.get_hyper('seq_embedding_size')
+        return self.get_hyper('seq_embedding_size') if self.get_hyper('seq_embedding_size') is not None else self.get_hyper('token_embedding_size')
 
     def _make_placeholders(self):
         """
