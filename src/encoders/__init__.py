@@ -4,4 +4,5 @@ from .rnn_seq_encoder import RNNEncoder
 from .self_att_encoder import SelfAttentionEncoder
 from .conv_seq_encoder import ConvolutionSeqEncoder
 from .conv_self_att_encoder import ConvSelfAttentionEncoder
+from .elmo_encoder import ElmoEncoder
 from .cbow_seq_encoder import CBoWEncoder
