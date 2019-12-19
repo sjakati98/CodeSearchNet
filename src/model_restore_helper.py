@@ -2,8 +2,8 @@ from typing import Any, Dict, Optional, Type
 
 import tensorflow as tf
 from dpu_utils.utils import RichPath
-from models import (ConvolutionalModel, ConvSelfAttentionModel, ElmoModel,
-                    Model, NeuralBoWModel, RNNModel, SelfAttentionModel)
+
+from models import Model, NeuralBoWModel, RNNModel, SelfAttentionModel, ConvolutionalModel, ConvSelfAttentionModel, ContinuousBoWModel, ElmoModel
 
 
 def get_model_class_from_name(model_name: str) -> Type[Model]:
@@ -20,6 +20,8 @@ def get_model_class_from_name(model_name: str) -> Type[Model]:
         return ConvSelfAttentionModel
     elif model_name in {'elmornn', 'elmo', 'elmornnmodel'}:
         return ElmoModel
+    elif model_name in {'continuousbow', 'continuousbowmodel', 'cbow'}:
+        return ContinuousBoWModel
     else:
         raise Exception("Unknown model '%s'!" % model_name)
 

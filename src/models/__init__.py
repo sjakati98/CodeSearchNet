@@ -5,3 +5,4 @@ from .self_att_model import SelfAttentionModel
 from .conv_model import ConvolutionalModel
 from .conv_self_att_model import ConvSelfAttentionModel
 from .elmo_model import ElmoModel
+from .cbow_model import ContinuousBoWModel

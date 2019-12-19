@@ -18,10 +18,6 @@ class NBoWEncoder(MaskedSeqEncoder):
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
 
-    @property
-    def output_representation_size(self):
-        return self.get_hyper('token_embedding_size')
-
     def make_model(self, is_train: bool=False) -> tf.Tensor:
         with tf.variable_scope("nbow_encoder"):
             self._make_placeholders()
@@ -32,4 +28,5 @@ class NBoWEncoder(MaskedSeqEncoder):
             return pool_sequence_embedding(self.get_hyper('nbow_pool_mode').lower(),
                                            sequence_token_embeddings=seq_tokens_embeddings,
                                            sequence_lengths=seq_token_lengths,
-                                           sequence_token_masks=seq_token_mask)
+                                           sequence_token_masks=seq_token_mask,
+                                           is_train=is_train)

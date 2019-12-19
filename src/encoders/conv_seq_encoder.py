@@ -23,10 +23,6 @@ class ConvolutionSeqEncoder(MaskedSeqEncoder):
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
 
-    @property
-    def output_representation_size(self):
-        return self.get_hyper('1dcnn_layer_list')[-1]
-
     def make_model(self, is_train: bool=False) -> tf.Tensor:
         with tf.variable_scope("1dcnn_encoder"):
             self._make_placeholders()
@@ -58,7 +54,8 @@ class ConvolutionSeqEncoder(MaskedSeqEncoder):
             return pool_sequence_embedding(self.get_hyper('1dcnn_pool_mode').lower(),
                                            sequence_token_embeddings=current_embeddings,
                                            sequence_lengths=seq_token_lengths,
-                                           sequence_token_masks=seq_token_mask)
+                                           sequence_token_masks=seq_token_mask,
+                                           is_train=is_train)
 
     def __add_position_encoding(self, seq_inputs: tf.Tensor) -> tf.Tensor:
         position_encoding = self.get_hyper('1dcnn_position_encoding').lower()

@@ -79,13 +79,6 @@ class RNNEncoder(SeqEncoder):
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
 
-    @property
-    def output_representation_size(self):
-        if self.get_hyper('rnn_is_bidirectional'):
-            return 2 * self.get_hyper('rnn_hidden_dim')
-        else:
-            return self.get_hyper('rnn_hidden_dim')
-
     def _encode_with_rnn(self,
                          inputs: tf.Tensor,
                          input_lengths: tf.Tensor) \
@@ -179,7 +172,8 @@ class RNNEncoder(SeqEncoder):
                 return pool_sequence_embedding(output_pool_mode,
                                                sequence_token_embeddings=token_embeddings,
                                                sequence_lengths=seq_tokens_lengths,
-                                               sequence_token_masks=token_mask)
+                                               sequence_token_masks=token_mask,
+                                               is_train=is_train)
 
     def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
         super().init_minibatch(batch_data)
